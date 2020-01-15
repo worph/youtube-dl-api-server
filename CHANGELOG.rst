@@ -1,6 +1,11 @@
 youtube-dl-api-server Changelog
 ===============================
 
+Version 0.4
+-----------
+
+- Add user_agent override
+
 Version 0.3
 -----------
 

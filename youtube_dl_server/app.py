@@ -6,9 +6,9 @@ import sys
 from flask import Flask, Blueprint, current_app, jsonify, request, redirect, abort
 import youtube_dl
 from youtube_dl.version import __version__ as youtube_dl_version
+from youtube_dl.utils import std_headers, random_user_agent
 
 from .version import __version__
-
 
 if not hasattr(sys.stderr, 'isatty'):
     # In GAE it's not defined and we must monkeypatch
@@ -129,15 +129,24 @@ ALLOWED_EXTRA_PARAMS = {
 def get_result():
     url = request.args['url']
     extra_params = {}
+
+    std_headers['User-Agent'] = random_user_agent()
+
     for k, v in request.args.items():
-        if k in ALLOWED_EXTRA_PARAMS:
-            convertf = ALLOWED_EXTRA_PARAMS[k]
-            if convertf == bool:
-                convertf = lambda x: query_bool(x, k)
-            elif convertf == list:
-                convertf = lambda x: x.split(',')
-            extra_params[k] = convertf(v)
-    return get_videos(url, extra_params)
+        if k == "user_agent":
+            std_headers['User-Agent'] = v
+        else:
+            if k in ALLOWED_EXTRA_PARAMS:
+                convertf = ALLOWED_EXTRA_PARAMS[k]
+                if convertf == bool:
+                    convertf = lambda x: query_bool(x, k)
+                elif convertf == list:
+                    convertf = lambda x: x.split(',')
+                extra_params[k] = convertf(v)
+
+    res = get_videos(url, extra_params)
+
+    return res
 
 
 @route_api('info')
