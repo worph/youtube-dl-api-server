@@ -37,6 +37,13 @@ def main():
               '%(default)s'),
     )
 
+    parser.add_argument(
+        '--proxy',
+        default=None,
+        type=str,
+        help='Proxy server to use, if any. The default is None.',
+    )
+
     parser.add_argument('--version', action='store_true',
                         help='Print the version of the server')
 
@@ -45,4 +52,5 @@ def main():
         print(__version__)
         exit(0)
 
+    app.config['proxy'] = args.proxy
     app.run(args.host, args.port, processes=args.number_processes)
