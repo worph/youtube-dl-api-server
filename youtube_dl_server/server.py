@@ -53,4 +53,4 @@ def main():
         exit(0)
 
     app.config['proxy'] = args.proxy
-    app.run(args.host, args.port, processes=args.number_processes)
+    app.run(args.host, args.port, processes=args.number_processes, threaded=False)
